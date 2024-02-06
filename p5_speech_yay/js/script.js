@@ -47,8 +47,8 @@ function draw() {
     background(227,127,111);
 
     if(showSubtitle){
-        textSize(15);
-        Text(toSay, 100, 100)
+        textSize(24);
+        text(toSay, 100, 100)
     }
 
 }
