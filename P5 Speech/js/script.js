@@ -21,6 +21,8 @@ const speechSynthesizer = new p5.Speech();
 const speechRecognizer = new p5.SpeechRec();
 let currentSpeech = '?';
 let score = 0;
+let mistake = 0;
+let happiness = 3;
 let randomNum = randomNumber(1, 10);
 let randomNum2 = randomNumber(1, 10);
 
@@ -32,17 +34,19 @@ Description of setup
 function setup() {
     createCanvas(500,500);
 
-    speechRecognizer.onResult = handleSpeechInput;
+    speechRecognizer.onResult = HandleResult;
 
-   // Synthesis settings
-    speechSynthesizer.setPitch(1);
-    speechSynthesizer.setRate(1);
+    // Synthesis settings
+    //speechSynthesizer.setPitch(1);
+    //speechSynthesizer.setRate(1);
     speechSynthesizer.setVoice('Google UK English Female');
-    //speechSynthesizer.onStart = speechStarted;
-    //speechSynthesizer.onEnd = speechEnded;
+    //speechSynthesizer.speak("Help me learn the names of Colors!")
     //console.log(speechSynthesizer.listVoices());
 
+    speechRecognizer.onStart = console.log("Waiting for Answer")
+    speechRecognizer.onEnd = console.log("Contemplating Result...")
     speechRecognizer.start();
+
 }
 
 /**
@@ -58,21 +62,52 @@ function draw() {
     text(randomNum, width / 2, height / 1.5);
 }
 
-function handleSpeechInput(){
+function HandleResult(){
     currentSpeech = speechRecognizer.resultString;
+    if(happiness >= 0)
+    {
+        switch(currentSpeech){
+            case "Yes":
+                speechSynthesizer.speak('YAY!');
+                score++;
+            break;
+            case "No":
+                speechSynthesizer.speak('mmm');
+                mistake++;
+                happiness--;
+            break;
+        }
+    }else {
+        speechSynthesizer.speak("You're no fun");
+        console.log("The computer doesn't look happy");
+
+    }
+
+
+
+    
 }
 
 function mousePressed() {
     // Start talking to the computer.
+    if(happiness > 0){
+        try{
+            console.log("Listening...")
+            speechRecognizer.start();
+        } catch (error){
+            console.log("Already Listening...");
+        }
+    }else{
+        console.log("The computer isn't responding...");
+    }
+    
+    
 }
 
 function randomNumber(min, max){
     return Math.floor(Math.random() * (max-min) + min);
 }
 
-function checkAnswer(){
-    
-}
 
 function checkColor(n){
     switch(n){
