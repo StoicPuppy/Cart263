@@ -32,7 +32,8 @@ let r, g, b = 0;
 Description of setup
 */
 function setup() {
-    createCanvas(500,500);
+
+    createCanvas(800,600);
 
     speechRecognizer.onResult = HandleResult;
 
@@ -55,37 +56,40 @@ Description of draw()
 function draw() {
     background(100,100,100);
 
+    fill(0,0,255)
+    circle(400, 200, 250, 250);
+
+    fill(0, 0, 0);
     textAlign(CENTER, CENTER);
     textSize(24);
     text("hi", width / 2, height / 4);
-    text(currentSpeech, width / 2, height / 2);
-    text(randomNum, width / 2, height / 1.5);
+    text(currentSpeech, width / 2, height / 1.6);
+    text(randomNum, width / 2, height / 1.3);
+    text(randomNum2, width / 2, height / 1.2);
 }
 
 function HandleResult(){
     currentSpeech = speechRecognizer.resultString;
-    if(happiness >= 0)
+    if(happiness > 0)
     {
         switch(currentSpeech){
             case "Yes":
                 speechSynthesizer.speak('YAY!');
                 score++;
+                console.log("Computer seems happy")
             break;
             case "No":
                 speechSynthesizer.speak('mmm');
                 mistake++;
                 happiness--;
+                console.log("Computer seems upset...")
             break;
         }
     }else {
         speechSynthesizer.speak("You're no fun");
         console.log("The computer doesn't look happy");
-
     }
 
-
-
-    
 }
 
 function mousePressed() {
