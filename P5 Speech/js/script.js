@@ -37,12 +37,11 @@ function setup() {
 
     speechRecognizer.onResult = HandleResult;
 
+    checkColor();
     // Synthesis settings
-    //speechSynthesizer.setPitch(1);
-    //speechSynthesizer.setRate(1);
+
     speechSynthesizer.setVoice('Google UK English Female');
     //speechSynthesizer.speak("Help me learn the names of Colors!")
-    //console.log(speechSynthesizer.listVoices());
 
     speechRecognizer.onStart = console.log("Waiting for Answer")
     speechRecognizer.onEnd = console.log("Contemplating Result...")
@@ -56,7 +55,7 @@ Description of draw()
 function draw() {
     background(100,100,100);
 
-    fill(0,0,255)
+    fill(r,g,b)
     circle(400, 200, 250, 250);
 
     fill(0, 0, 0);
@@ -73,13 +72,14 @@ function HandleResult(){
     if(happiness > 0)
     {
         switch(currentSpeech){
-            case "Yes":
+            case "yes": case "correct": case "good": case "good job": case "you're good":
                 speechSynthesizer.speak('YAY!');
                 score++;
                 console.log("Computer seems happy")
             break;
-            case "No":
-                speechSynthesizer.speak('mmm');
+            case "try again": case "no": case "nope": case "incorrect": case "negative": case "sorry":
+                speechSynthesizer.setRate(0.8)
+                speechSynthesizer.speak(':(');
                 mistake++;
                 happiness--;
                 console.log("Computer seems upset...")
@@ -102,6 +102,7 @@ function mousePressed() {
             console.log("Already Listening...");
         }
     }else{
+        speechSynthesizer.speak("You're no fun");
         console.log("The computer isn't responding...");
     }
     
