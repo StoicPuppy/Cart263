@@ -53,15 +53,16 @@ function setup() {
 Description of draw()
 */
 function draw() {
-    background(100,100,100);
+    background(50,100,150);
 
-    fill(r,g,b)
+    //fill(r,g,b)
+    fill(255,100,0)
     circle(400, 200, 250, 250);
 
     fill(0, 0, 0);
     textAlign(CENTER, CENTER);
     textSize(24);
-    text("hi", width / 2, height / 4);
+    //text("hi", width / 2, height / 4);
     text(currentSpeech, width / 2, height / 1.6);
     text(randomNum, width / 2, height / 1.3);
     text(randomNum2, width / 2, height / 1.2);
@@ -110,7 +111,6 @@ function mousePressed() {
 function randomNumber(min, max){
     return Math.floor(Math.random() * (max-min) + min);
 }
-
 
 function checkColor(n){
     switch(n){
