@@ -105,8 +105,6 @@ function mousePressed() {
         speechSynthesizer.speak("You're no fun");
         console.log("The computer isn't responding...");
     }
-    
-    
 }
 
 function randomNumber(min, max){
