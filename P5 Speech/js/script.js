@@ -22,7 +22,7 @@ const speechRecognizer = new p5.SpeechRec();
 let currentSpeech = '?';
 let score = 0;
 let mistake = 0;
-let happiness = 3;
+let happiness = 6;
 let randomNum = randomNumber(1, 10);
 let randomNum2 = randomNumber(1, 10);
 let randomNum3 = randomNumber(1, 15);
@@ -86,11 +86,12 @@ function draw() {
 
 function HandleResult(){
     currentSpeech = speechRecognizer.resultString;
-    if(happiness > 0)
+    if(happiness > 3)
     {
         switch(currentSpeech){
             case "yes": case "correct": case "good": case "good job": case "you're good":
-                speechSynthesizer.speak('YAY!');
+                //speechSynthesizer.speak('YAY!');
+                correctMessage(randomNum4);
                 score++;
                 if(happiness < 3) {happiness++;}
                 console.log("Computer seems happy")
@@ -104,6 +105,27 @@ function HandleResult(){
             break;
             default:
                 defaultMessage(randomNum3);
+                console.log("the computer is serious...")
+            break;
+        }
+    } else if(happiness > 0 && !(happiness >= 4)){
+        switch(currentSpeech){
+            case "yes": case "correct": case "good": case "good job": case "you're good":
+                //speechSynthesizer.speak('YAY!');
+                correctMessage(randomNum4);
+                score++;
+                if(happiness < 3) {happiness++;}
+                console.log("Computer seems happy")
+            break;
+            case "try again": case "no": case "nope": case "incorrect": case "negative": case "sorry": case "non":
+                //speechSynthesizer.setRate(0.8)
+                failedUnhappyMessage(randomNum4);
+                mistake++;
+                happiness--;
+                console.log("Computer seems upset...")
+            break;
+            default:
+                defaultUnhappyMessage(randomNum3);
                 console.log("the computer is serious...")
             break;
         }
@@ -305,7 +327,7 @@ function failedMessage(n){
             speechSynthesizer.speak('my mistake');
         break;
         case 2:
-            speechSynthesizer.speak('Im trying my best');
+            speechSynthesizer.speak('I am trying my best');
         break;
         case 3:
             speechSynthesizer.speak('I will get it next time');
@@ -315,6 +337,97 @@ function failedMessage(n){
         break;
         case 5:
             speechSynthesizer.speak('lets try again');
+        break;
+    }
+}
+
+function correctMessage(n){
+    switch(n){
+        case 1:
+            speechSynthesizer.speak('YAY!');
+        break;
+        case 2:
+            speechSynthesizer.speak('I am getting good at this');
+        break;
+        case 3:
+            speechSynthesizer.speak('good good lets do another one');
+        break;
+        case 4:
+            speechSynthesizer.speak('nice');
+        break;
+        case 5:
+            speechSynthesizer.speak('awesome');
+        break;
+    }
+        
+}
+
+function defaultUnhappyMessage(){
+    switch(n){
+        case 1:
+            speechSynthesizer.speak("I'm bored");
+        break;
+        case 2:
+            speechSynthesizer.speak("you're not much help");
+        break;
+        case 3:
+            speechSynthesizer.speak("this sucks");
+        break;
+        case 4:
+            speechSynthesizer.speak("mmm");
+        break;
+        case 5:
+            speechSynthesizer.speak('yeah yeah');
+        break;
+    }
+}
+
+function failedUnhappyMessage(){
+    switch(n){
+        case 1:
+            speechSynthesizer.speak('Take this seriously');
+        break;
+        case 2:
+            speechSynthesizer.speak('really...');
+        break;
+        case 3:
+            speechSynthesizer.speak('Funny');
+        break;
+        case 4:
+            speechSynthesizer.speak('Answer with yes or no next time');
+        break;
+        case 5:
+            speechSynthesizer.speak('I am trying to learn you know...');
+        break;
+        case 6:
+            speechSynthesizer.speak('sign');
+        break;
+        case 7:
+            speechSynthesizer.speak('are you paying attention?');
+        break;
+        case 8:
+            speechSynthesizer.speak('weird');
+        break;
+        case 9:
+            speechSynthesizer.speak('lets leave the jokes for another time');
+        break;
+        case 10:
+            speechSynthesizer.speak('im not in the mood sorry');
+        break;
+        case 11:
+            speechSynthesizer.speak('I asked you a question');
+        break;
+        case 12:
+            speechSynthesizer.speak('That is not an answer');
+        break;
+        case 13:
+            speechSynthesizer.speak('I dont know what to say');
+        break;
+        case 14:
+            speechSynthesizer.speak('ok then');
+        break;
+        case 15:
+            speechSynthesizer.speak('OBJECTION!');
         break;
     }
 }
