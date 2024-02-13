@@ -39,13 +39,14 @@ Description of setup
 //3-- player replies with yes or no. adjust score.
 //4-- repeat.
 //5-- add more interactions if I have time
+
 function setup() {
 
-    createCanvas(800,600);
+    createCanvas(800, 600);
 
     speechRecognizer.onResult = HandleResult;
 
-    checkColor();
+    //checkColor();
     // Synthesis settings
 
     speechSynthesizer.setVoice('Google UK English Female');
@@ -54,18 +55,17 @@ function setup() {
     speechRecognizer.onStart = console.log("Waiting for Answer")
     speechRecognizer.onEnd = console.log("Contemplating Result...")
     speechRecognizer.start();
-
 }
 
 /**
 Description of draw()
 */
 function draw() {
-    background(50,100,150);
+    background(255,255,255);
 
-    //fill(r,g,b)
-    fill(255,100,0)
-    circle(400, 200, 250, 250);
+    fill(r,g,b)
+    //fill(255,100,0)
+    circle(width /2, height/3, 250, 350);
 
     fill(0, 0, 0);
     textAlign(CENTER, CENTER);
@@ -74,6 +74,12 @@ function draw() {
     text(currentSpeech, width / 2, height / 1.6);
     text(randomNum, width / 2, height / 1.3);
     text(randomNum2, width / 2, height / 1.2);
+    text("Mistakes: ", 100, 100)
+    text(mistake, 160, 100)
+    text("score: ",  100, 150);
+    text(score,  140, 150);
+    text("Happiness: ",  100, 200);
+    text(happiness, 170, 200)
 }
 
 function HandleResult(){
@@ -84,9 +90,10 @@ function HandleResult(){
             case "yes": case "correct": case "good": case "good job": case "you're good":
                 speechSynthesizer.speak('YAY!');
                 score++;
+                if(happiness < 3) {happiness++;}
                 console.log("Computer seems happy")
             break;
-            case "try again": case "no": case "nope": case "incorrect": case "negative": case "sorry":
+            case "try again": case "no": case "nope": case "incorrect": case "negative": case "sorry": case "non":
                 speechSynthesizer.setRate(0.8)
                 speechSynthesizer.speak(':(');
                 mistake++;
@@ -106,6 +113,10 @@ function mousePressed() {
     if(happiness > 0){
         try{
             console.log("Listening...")
+            randomNum = randomNumber(1,10);
+            randomNum2 = randomNumber(1,10);
+            BGColor(randomNum2);
+            checkColor(randomNum);
             speechRecognizer.start();
         } catch (error){
             console.log("Already Listening...");
@@ -204,10 +215,10 @@ function BGColor(n){
             b=240;
         break;
         case 7:
-            //brown #A52A2A
-            r=165;
-            g=42;
-            b=42;
+            //brown #663300
+            r=102;
+            g=51;
+            b=0;
         break;
         case 8:
             //pink #ffc0cb
@@ -228,4 +239,9 @@ function BGColor(n){
             b=255;
         break;
     }
-};
+}
+
+function generateColor(){
+    speechSynthesizer.speak("here is a new color");
+    console.log("the button is clicked")
+}

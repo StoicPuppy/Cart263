@@ -8,6 +8,9 @@ using the CSS Grid.
 Also hides overflow.
 
 **********************************************/
+*{
+  background-image: url("../assets/images/RainbowColor.jpg");
+}
 
 body {
   padding: 0;
@@ -18,4 +21,3 @@ body {
   height: 100vh; /* Body is the height of the viewport */
   overflow: hidden; /* Hide anything that goes off the window size */
 }
-
