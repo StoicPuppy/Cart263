@@ -21,7 +21,7 @@ const speechSynthesizer = new p5.Speech();
 const speechRecognizer = new p5.SpeechRec();
 let currentSpeech = '?';
 let score = 0;
-let trueScore = 0;
+let trueScore = 6;
 let mistake = 0;
 let trueMistake = 0;
 let happiness = 6;
@@ -58,7 +58,7 @@ function setup() {
 
     speechRecognizer.onStart = console.log("Waiting for Answer")
     speechRecognizer.onEnd = console.log("Contemplating Result...")
-    speechRecognizer.start();
+    //speechRecognizer.start();
 }
 
 /**
@@ -86,6 +86,8 @@ function draw() {
     text(trueMistake, 190, 200)
     text("True score: ",  100, 250);
     text(trueScore,  170, 250);
+    text("Happiness: ",  100, 300);
+    text(happiness,  170, 300);
     //text("Happiness: ",  100, 200);
     //text(happiness, 170, 200)
 }
@@ -147,20 +149,27 @@ function HandleResult(){
 function mousePressed() {
     // Start talking to the computer.
     if(happiness > 0){
-        try{
-            console.log("Listening...")
-            randomNum = randomNumber(1,10);
-            randomNum2 = randomNumber(1,10);
-            randomNum3 = randomNumber(1,15);
-            randomNum4 = randomNumber(1,5);
-            BGColor(randomNum2);
-            checkColor(randomNum);
-            console.log(randomNum);
-            //correctColor(randomNum, randomNum2);
-            speechRecognizer.start();
-        } catch (error){
-            console.log("Already Listening...");
+        if(trueScore < score+2 || trueMistake < mistake+2) //or is not working
+        {
+            try{
+                console.log("Listening...")
+                randomNum = randomNumber(1,10);
+                randomNum2 = randomNumber(1,10);
+                randomNum3 = randomNumber(1,15);
+                randomNum4 = randomNumber(1,5);
+                BGColor(randomNum2);
+                checkColor(randomNum);
+                console.log(randomNum);
+                //correctColor(randomNum, randomNum2);
+                speechRecognizer.start();
+            } catch (error){
+                console.log("Already Listening...");
+            }
+        }else{
+            speechSynthesizer.speak("are you lying to me ?");
+            console.log("the computer is suspecting you")
         }
+        
     }else{
         speechSynthesizer.speak("You're no fun");
         console.log("The computer isn't responding...");
@@ -384,7 +393,7 @@ function correctMessage(n){
         
 }
 
-function defaultUnhappyMessage(){
+function defaultUnhappyMessage(n){
     switch(n){
         case 1:
             speechSynthesizer.speak('you are getting on my nerves');
@@ -434,7 +443,7 @@ function defaultUnhappyMessage(){
     }
 }
 
-function failedUnhappyMessage(){
+function failedUnhappyMessage(n){
     switch(n){
         case 1:
             speechSynthesizer.speak("I'm bored");
