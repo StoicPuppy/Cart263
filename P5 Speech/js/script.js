@@ -31,6 +31,14 @@ let r, g, b = 0;
 /**
 Description of setup
 */
+
+//what I need to do
+
+//1-- work on making a good interface for the user to understand what the game is
+//2-- on click of a button, generate a color on screen and say that color.
+//3-- player replies with yes or no. adjust score.
+//4-- repeat.
+//5-- add more interactions if I have time
 function setup() {
 
     createCanvas(800,600);
