@@ -2,196 +2,256 @@
 Title of Project: P5 speech fun project
 Author Name: Patrick Marler
 
-This is a template. You must fill in the title,
-author, and this description to match your project!
+This project is a simple color guessing game
+This interesting part of this game is the computer will have a happiness meter and different dialogue
+The happiness meter will get lower with every mistake and foolish answer
+The goal of the game is the get a score of 5 by helping the computer guess correctly
+The player will lose if the happiness meter falls to 0 of below, or if the player lies too much
+
 */
 ///////////
 //
-// I want the player to ask the computer to guess the color on screen.
-// The computer will answer with a random color from the choices I give it.
-// The player will respond with yes or no.
-// if the comuter gets it wrong 3 times, it will get upset and stop talking.
-// get points for each successful result
-// reset the game.
 //
 ///////////
 "use strict";
 
-const speechSynthesizer = new p5.Speech();
-const speechRecognizer = new p5.SpeechRec();
-let currentSpeech = '?';
-let score = 0;
-let trueScore = 6;
-let mistake = 0;
-let trueMistake = 0;
-let happiness = 6;
-let randomNum = randomNumber(1, 10);
+const speechSynthesizer = new p5.Speech(); //speech Synthesizer
+const speechRecognizer = new p5.SpeechRec(); //speech Recognizer
+let currentSpeech = '?'; //currently spoken words
+let score = 0; //score of the computer and player
+let trueScore = 0; //true score. hidden from the player
+let mistake = 0; //mistake counter of the computer
+let trueMistake = 0; //true mistake counter. hidden from the player
+let happiness = 12; //happiness level. will go down for every mistake or non-answer
+
+//random number for different dialogue options
+let randomNum = randomNumber(1, 10); 
 let randomNum2 = randomNumber(1, 10);
 let randomNum3 = randomNumber(1, 15);
 let randomNum4 = randomNumber(1,5);
+let gameOver = false; //is the game over
+let youWin = false; //did the player win
+let youLose = false; //did the player lose
 
-let r, g, b = 0;
+let r, g, b = 0; //color of the circle
 
 /**
 Description of setup
 */
 
-//what I need to do
-
-//1-- work on making a good interface for the user to understand what the game is
-//2-- on click of a button, generate a color on screen and say that color.
-//3-- player replies with yes or no. adjust score.
-//4-- repeat.
-//5-- add more interactions if I have time
-
+//setup creates a canvas and says hi to the player
 function setup() {
 
     createCanvas(800, 600);
 
     speechRecognizer.onResult = HandleResult;
 
-    //checkColor();
     // Synthesis settings
-
     speechSynthesizer.setVoice('Google UK English Female');
-    //speechSynthesizer.speak("Help me learn the names of Colors!")
-
-    speechRecognizer.onStart = console.log("Waiting for Answer")
-    speechRecognizer.onEnd = console.log("Contemplating Result...")
-    //speechRecognizer.start();
+    //speechRecognizer.onStart = console.log("Waiting for Answer")
+    //speechRecognizer.onEnd = console.log("Contemplating Result...")
+    speechSynthesizer.speak("Hello!. Help me learn the names of Colors!");
 }
 
 /**
 Description of draw()
 */
+
+//the draw function contains a white background as well as the score and mistake counters.
+//it also draws the colored circle
 function draw() {
     background(255,255,255);
 
-    fill(r,g,b)
-    //fill(255,100,0)
+    fill(r,g,b) //random color will be asigned
     circle(width /2, height/3, 250, 350);
 
     fill(0, 0, 0);
     textAlign(CENTER, CENTER);
     textSize(24);
-    //text("hi", width / 2, height / 4);
+    text("Help the Computer guess the correct colors!", 400, height-560);
     text(currentSpeech, width / 2, height / 1.6);
-    text(randomNum, width / 2, height / 1.3);
-    text(randomNum2, width / 2, height / 1.2);
-    text("Mistakes: ", 100, 100)
-    text(mistake, 160, 100)
-    text("score: ",  100, 150);
-    text(score,  140, 150);
-    text("True Mistakes: ", 100, 200)
-    text(trueMistake, 190, 200)
-    text("True score: ",  100, 250);
-    text(trueScore,  170, 250);
-    text("Happiness: ",  100, 300);
-    text(happiness,  170, 300);
-    //text("Happiness: ",  100, 200);
-    //text(happiness, 170, 200)
+    text("Mistakes: " + mistake, 100, 500)
+    text("Score: " + score,  100, 450);
+    
+    if(youWin == true) //text appears if you win the game
+    {
+        text("You've been a good help! thank you!", width / 2, height / 1.6);
+        currentSpeech = " ";
+    }
+    if(youLose == true)// text appears if you lose the game
+    {
+        text("The computer is upset. Maybe try again ?", width / 2, height / 1.6);
+        currentSpeech = " ";
+    }
 }
 
 function HandleResult(){
     currentSpeech = speechRecognizer.resultString;
-    if(happiness > 3)
+    if(happiness > 6)
     {
         switch(currentSpeech){
-            case "yes": case "correct": case "good": case "good job": case "you're good":
-                correctMessage(randomNum4);
+            case "yes": case "correct": case "good": case "good job": case "you're good": case "Yass":
+                speechSynthesizer.setRate(1);
+                speechSynthesizer.setPitch(1);
+                correctMessage(randomNum4); //random positive response is chosen
                 score++;
-                if(happiness < 3) {happiness++;}
+                if(happiness < 12) {happiness++;}
                 correctColor(randomNum, randomNum2);
                 console.log("Computer seems happy")
+                GameWon(score); //check if game is won
+                //if the player answers positively, the score is increased and the happiness is increased.
             break;
             case "try again": case "no": case "nope": case "incorrect": case "negative": case "sorry": case "non":
-                //speechSynthesizer.setRate(0.8)
-                failedMessage(randomNum4);
+                speechSynthesizer.setRate(1);
+                speechSynthesizer.setPitch(1);
+                failedMessage(randomNum4); //random negative response is chosen
                 mistake++;
+                happiness--;
                 happiness--;
                 correctColor(randomNum, randomNum2);
                 console.log("Computer seems upset...")
+                //if the player answers negatively, the score and happiness are decreased.
             break;
             default:
-                defaultMessage(randomNum3);
+                speechSynthesizer.setRate(1);
+                speechSynthesizer.setPitch(1);
+                defaultMessage(randomNum3);  //random default response is chosen
                 console.log("the computer is serious...")
+                happiness--;
+                //if the player does not answer yes or no, or decides to fool around, the computer will lose a small amount of happiness
             break;
         }
-    } else if(happiness > 0 && !(happiness >= 4)){
+    } else if(happiness > 0 && !(happiness >= 7)){
         switch(currentSpeech){
             case "yes": case "correct": case "good": case "good job": case "you're good":
-                correctMessage(randomNum4);
+                speechSynthesizer.setRate(0.8); //computer now has a more annoyed voice because their happiness is low
+                speechSynthesizer.setPitch(0.8);
+                correctMessage(randomNum4); //random positive response is chosen
                 score++;
-                if(happiness < 3) {happiness++;}
+                if(happiness < 12) {happiness++;}
                 correctColor(randomNum, randomNum2);
                 console.log("Computer seems happy")
+                GameWon(score); //check if game is won
+                //if the player answers positively, the score is increased and the happiness is increased.
             break;
             case "try again": case "no": case "nope": case "incorrect": case "negative": case "sorry": case "non":
-                //speechSynthesizer.setRate(0.8)
-                failedUnhappyMessage(randomNum4);
+                speechSynthesizer.setRate(0.8); 
+                speechSynthesizer.setPitch(0.8);
+                failedUnhappyMessage(randomNum4); //random even more negative response is chosen
                 mistake++;
+                happiness--;
                 happiness--;
                 correctColor(randomNum, randomNum2);
                 console.log("Computer seems upset...")
+                //if the player answers negatively, the score and happiness are decreased.
             break;
             default:
-                defaultUnhappyMessage(randomNum3);
+                speechSynthesizer.setRate(0.8);
+                speechSynthesizer.setPitch(0.8);
+                defaultUnhappyMessage(randomNum3); //random negative default response is chosen
                 console.log("the computer is serious...")
+                happiness--;
+                //if the player does not answer yes or no, or decides to fool around, the computer will lose a small amount of happiness
             break;
         }
     }else {
         speechSynthesizer.speak("You're no fun");
+        gameOver = true;
+        youLose = true;
         console.log("The computer doesn't look happy");
+        //if the computer has zero or lower happiness, they will stop asking for help.
+        //the player loses
     }
 
 }
 
 function mousePressed() {
     // Start talking to the computer.
-    if(happiness > 0){
-        if(trueScore < score+2 || trueMistake < mistake+2) //or is not working
-        {
-            try{
-                console.log("Listening...")
-                randomNum = randomNumber(1,10);
-                randomNum2 = randomNumber(1,10);
-                randomNum3 = randomNumber(1,15);
-                randomNum4 = randomNumber(1,5);
-                BGColor(randomNum2);
-                checkColor(randomNum);
-                console.log(randomNum);
-                //correctColor(randomNum, randomNum2);
-                speechRecognizer.start();
-            } catch (error){
-                console.log("Already Listening...");
+    //console logging important stats
+    console.log("Happiness : "+ happiness);
+    console.log("score : "+ score);
+    console.log("trueScore : " + trueScore);
+    console.log("mistakes : " + mistake);
+    console.log("trueMistakes : " + trueMistake);
+    console.log("youLose : " + youLose);
+    console.log("youWin : " + youWin);
+    console.log("gameOver : " + gameOver);
+    if(gameOver != true) //if the game is not over -> continue
+    {
+        if(happiness > 0){ //if the happiness is greater
+            if(trueScore < score+3 ) //or is not working
+            {
+                if(trueMistake < mistake+3)
+                {
+                    try{
+                        console.log("Listening...")
+                        randomNum = randomNumber(1,10);
+                        randomNum2 = randomNumber(1,10);
+                        randomNum3 = randomNumber(1,15);
+                        randomNum4 = randomNumber(1,5);
+                        BGColor(randomNum2);
+                        checkColor(randomNum);
+                        console.log(randomNum);
+                        speechRecognizer.start();
+                    } catch (error){
+                        console.log("Already Listening...");
+                    }
+                }else{
+                    speechSynthesizer.speak("are you lying to me ?");
+                    speechSynthesizer.speak("Here I am asking for your help and all you're doing is feeding me wrong information. This is goodbye");
+                    gameOver = true;
+                    youLose = true;
+                    console.log("too many true mistakes")
+                    //if the player lies too much, the computer will take notice and get upset
+                }
+            }else{
+                speechSynthesizer.speak("are you lying to me ?");
+                speechSynthesizer.speak("I thought I was getting better but it turns out you just enjoy making fun of me. well I am done. goodbye");
+                gameOver = true;
+                youLose = true;
+                console.log("too many true score")
+                //if the player lies too much, the computer will take notice and get upset
             }
         }else{
-            speechSynthesizer.speak("are you lying to me ?");
-            console.log("the computer is suspecting you")
+            speechSynthesizer.speak("You're no fun");
+            gameOver = true;
+            youLose = true;
+            console.log("The computer isn't responding...");
+            //if the computer has zero or lower happiness, they will stop asking for help.
+            //the player loses
         }
-        
     }else{
-        speechSynthesizer.speak("You're no fun");
-        console.log("The computer isn't responding...");
+        speechSynthesizer.speak("I dont need your help anymore");
+        //final speech
     }
+    
 }
 
 function randomNumber(min, max){
     return Math.floor(Math.random() * (max-min) + min);
 }
 
+//this function calculates the true score behind the scenes
 function correctColor(num, num2){
-    //num = randomNum;
-    //num2= randomNum2;
     if(num === num2){
-        console.log(num);
-        console.log(num2);
         trueScore++;
     }else{
         trueMistake++;
     }
 }
 
+//this function checks if the game is won
+function GameWon(n){
+    if(n >= 5)
+    {
+        youWin =true;
+        speechSynthesizer.speak("Thank you so much for your help! I learnt a lot today!");
+        gameOver =true;
+        text("You've been a good help! thank you!", width / 2, height / 1.6);
+    }
+}
+
+//this function will make the computer guess which color is on screen
 function checkColor(n){
     switch(n){
         case 1:
@@ -237,6 +297,7 @@ function checkColor(n){
     }
 }
 
+//this function will display a random color from the 10 here and display it in the circle
 function BGColor(n){
     switch(n){
         case 1:
@@ -302,6 +363,7 @@ function BGColor(n){
     }
 }
 
+//this function will make the computer say a random default message
 function defaultMessage(n){
     switch(n){
         case 1:
@@ -352,6 +414,7 @@ function defaultMessage(n){
     }
 }
 
+//this function will make the computer say a random negative message
 function failedMessage(n){
     switch(n){
         case 1:
@@ -372,6 +435,7 @@ function failedMessage(n){
     }
 }
 
+//this function will make the computer say a random positive message
 function correctMessage(n){
     switch(n){
         case 1:
@@ -393,6 +457,7 @@ function correctMessage(n){
         
 }
 
+//this function will make the computer say a random unhappy default message
 function defaultUnhappyMessage(n){
     switch(n){
         case 1:
@@ -443,6 +508,7 @@ function defaultUnhappyMessage(n){
     }
 }
 
+//this function will make the computer say a random unhappy negative message
 function failedUnhappyMessage(n){
     switch(n){
         case 1:
@@ -463,7 +529,3 @@ function failedUnhappyMessage(n){
     }
 }
 
-function generateColor(){
-    speechSynthesizer.speak("here is a new color");
-    console.log("the button is clicked")
-}
