@@ -20,26 +20,62 @@ extra game***
 
 "use strict";
 
-
-/**
-Description of preload
-*/
-function preload() {
-
-}
+let state = 'loading';
+let video;
+let modelName = 'CocoSsd';
+let cocossd;
+let predictions = [];
+let clothesPiece = 'person';
 
 
 /**
 Description of setup
 */
 function setup() {
-
+    createCanvas(700, 500);
+    video = createCapture(VIDEO);
+    video.hide();
+    cocossd = ml5.objectDetector('cocossd', {}, function(){
+        cocossd.detect(video, gotResults);
+        state = 'running';
+    });
 }
 
+function gotResults(err, results){
+    if(err){
+        console.error(err);
+    }else{
+        predictions = results;
+    }
+    cocossd.detect(video, gotResults);
+}
 
 /**
 Description of draw()
 */
 function draw() {
+    if(state === 'loadin'){
+        loading();
+    }
+    else if(state === 'running'){
+        running();
+    } else if (state === oufit){
+        pieceFound();
+    }
+}
 
+function loading(){
+    background(255);
+    push();
+    textSize(24);
+    textAlign(CENTER, CENTER);
+    text('Loading ${modelName}', width/2, height/2 );
+    pop();
+}
+
+function running() {
+    background(255)
+    text("let me rate your oufit before you put it on!")
+
+    
 }

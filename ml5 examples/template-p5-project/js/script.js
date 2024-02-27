@@ -21,6 +21,7 @@ let modelName = `CocoSsd`;
 let cocossd;
 // The current set of predictions made by CocoSsd once it's running
 let predictions = [];
+let oufit = 'person';
 
 /**
 Starts the webcam and the ObjectDetector
@@ -101,7 +102,17 @@ function running() {
       // Get the object predicted
       let object = predictions[i];
       // Highlight it on the canvas
-      highlightObject(object);
+      if(object.label == oufit)
+      {
+        console.log("this is a person");
+        push();
+        stroke(255, 255, 0);
+        rect(object.x, object.y, object.width, object.height);
+        pop();
+      }else{
+        highlightObject(object);
+      }
+      
     }
   }
 }
