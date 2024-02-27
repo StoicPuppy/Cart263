@@ -26,7 +26,12 @@ let modelName = 'CocoSsd';
 let cocossd;
 let predictions = [];
 let clothesPiece = 'person';
-let clothes1 = 0;
+let shirtRating = 0;
+let showShirt = false;
+let pantsRating = 0;
+let showPants = false;
+let socksRating = 0;
+let showSocks = false;
 
 
 /**
@@ -83,10 +88,10 @@ function running() {
             let object = predictions[i];
             text("this "+object.label+" is beautiful. I give it a "+object.confidence.toFixed(2) *100+"%", 10, 15*i+50);
             //console.log(object.confidence.toFixed(2) *100);
-            if(object.label === clothesPiece){
+            if(object.label === clothesPiece && showShirt == false){
                 // add countdown
                 console.log(object.confidence.toFixed(2) *100)
-                clothes1 = object.confidence.toFixed(1) *10;
+                shirtRating = object.confidence.toFixed(1) *10;
                 state = 'found';
             }
         }
