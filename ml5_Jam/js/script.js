@@ -26,22 +26,22 @@ extra game***
 
 "use strict";
 
-let state = 'loading';
+let state = 'loading'; //loading state
 let video;
 let modelName = 'CocoSsd';
 let cocossd;
-let predictions = [];
+let predictions = []; //array of predictions
 //the CocoSsd model will any piece of clothing as 'person'.
 let clothesPiece = 'person';
 
-//store rating of shirt
-let shirtRating = 0;
+
+let shirtRating = 0; //store rating of shirt
 let showShirt = false;
-//store rating of pants
-let pantsRating = 0;
+
+let pantsRating = 0;//store rating of pants
 let showPants = false;
-//store rating of socks
-let socksRating = 0;
+
+let socksRating = 0; //store rating of socks
 let showSocks = false;
 
 //is player ready to continue
@@ -53,6 +53,7 @@ let catFound = false; //did the computer find a cat
 let bigCat = false; //big cat
 let dogFound = false;//did the computer see a dog
 let dogCount = 0; //increases with the amount of time the dog is on screen
+let noCatCount = 0; //increases with the amount of time without the cat
 
 /**
 setup the canvas ad video
@@ -98,7 +99,7 @@ function draw() {
         start(); //start state with instructions
     } else 
     if(state === 'end'){
-        dogDetectedError(); //end dog state
+        dogDetectedError(); //end state
     } else 
     if(state === 'goodEnd'){
         catDectetedSuccess(); //end cat state
@@ -187,8 +188,8 @@ function running() {
 }
 
 function mousePressed(){
-    if(state == 'end'){ //ends the game if theres too many dogs
-        console.log("some people are scared of dogs");
+    if(state == 'end'){ //ends the game if theres too many dogs or no cat
+        console.log("the computer is upset");
     }else 
     if(state == 'goodEnd'){ //ends the game if theres a big cat
         console.log("you might want to reboot"); 
@@ -267,6 +268,11 @@ function catMode(){
         for (let i = 0; i<predictions.length; i++){
             let object = predictions[i];
             textSize(36);
+            if(noCatCount >= 1000){
+                text("im sad now", 10, 95);
+                text("why wont you show me your cat", 10, 135);
+                state = 'end'; // end the game if you dont show your cat on time
+            }
             if(object.label === 'dog' && dogCount >= 1000)
             {
                 text("SYSTEM SHUTDOWN...", 10, 165); 
@@ -296,6 +302,9 @@ function catMode(){
                     bigCat = true;
                     state = 'goodEnd'; //game ends if the cat gets too close to the screen
                 }
+            }else{
+                noCatCount++;
+                noCatCountChecker();
             }
         }
     }
@@ -319,6 +328,12 @@ function censorBox(object){
 function dogCountChecker(){
     if(dogCount >= 1000){
         console.log(dogCount);
+    }
+}
+
+function noCatCountChecker(){
+    if(noCatCount >= 1000){
+        console.log(noCatCount);
     }
 }
 
