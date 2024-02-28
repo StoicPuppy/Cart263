@@ -34,8 +34,9 @@ let showPants = false;
 let socksRating = 0;
 let showSocks = false;
 
-let timer;
-let countdown;
+let ready = false;
+let clothesShown = 0;
+let ReviewGiven = false;
 
 /**
 Description of setup
@@ -78,7 +79,6 @@ function loading(){
     textSize(24);
     textAlign(CENTER, CENTER);
     text('Loading ${modelName}', width/2, height/2 );
-    text("let me rate your oufit before you put it on!");
     pop();
 }
 
@@ -90,39 +90,42 @@ function running() {
     if(predictions){
         for (let i = 0; i<predictions.length; i++){
             let object = predictions[i];
-            text("let me rate your oufit before you put it on!");
-            if(object.label === clothesPiece && showShirt == false) {
-                text("lets see what your shirt looks like", 10, 15*i+30);
-                text("also, one piece of clothing at a time please!", 10, 15*i+60);
+            if(object.label === clothesPiece && showSocks == false && clothesShown == 2) {
+                text("finally show me your best pair of socks!", 10, 15*i+60);
+                text("also, one piece of clothing at a time please!", 10, 15*i+30);
                 textSize(24);
                 textStyle(BOLD);
-                highlightObject(object);
-                console.log("shirt found!");
-                console.log(object.confidence.toFixed(2) *100)
-                shirtRating = object.confidence.toFixed(1) *10;
-                //showShirt = true;
-                //state = 'found';
-
-            }else if(object.label === clothesPiece && showPants == false) {
-                text("show me the pants, shorts or skirt you want to wear!");
-                textSize(24);
-                textStyle(BOLD);
-                highlightObject(object);
-                console.log("pants found!");
-                console.log(object.confidence.toFixed(2) *100)
-                pantsRatingRating = object.confidence.toFixed(1) *10;
-            }else if(object.label === clothesPiece && showSocks == false){
-                text("finally show me your best pair of socks!");
-                textSize(24);
-                textStyle(BOLD);
-                highlightObject(object);
+                highlightBox(object);
                 console.log("socks found!");
                 console.log(object.confidence.toFixed(2) *100)
                 socksRating = object.confidence.toFixed(1) *10;
-            } else{
-                text("I think im ready to give my review!");
+                
+            }else if(object.label === clothesPiece && showPants == false && clothesShown == 1) {
+                text("show me the pants, shorts or skirt you want to wear!", 10, 15*i+30);
                 textSize(24);
                 textStyle(BOLD);
+                highlightBox(object);
+                console.log("pants found!");
+                console.log(object.confidence.toFixed(2) *100)
+                pantsRating = object.confidence.toFixed(1) *10;
+                
+            }else if(object.label === clothesPiece && showShirt == false && clothesShown == 0){
+                text("lets see what your shirt looks like", 10, 15*i+30);
+                textSize(24);
+                textStyle(BOLD);
+                highlightBox(object);
+                console.log("shirt found!");
+                console.log(object.confidence.toFixed(2) *100)
+                shirtRating = object.confidence.toFixed(1) *10;
+                
+            } else if (clothesShown >= 3){
+                text("I think im ready to give my review!", 10, 15*i+30);
+                text("I give your oufit a "+(shirtRating+pantsRating+socksRating)/3+" out of 10!", 10, 15*i+60);
+                textSize(24);
+                textStyle(BOLD);
+                ReviewGiven = true;
+            }else{
+                text("ERROR ERROR TOO MANY ITEMS", 10, 15*i+60);
             }
         }
     }
@@ -137,9 +140,27 @@ function running() {
 }
 
 function mousePressed(){
+    if(ready == true){
+        state = 'running';
+        ready = false;
+    } else 
+    if(socksRating != 0){
+        state = 'found';
+        showSocks = true;
+        clothesShown++;
+        console.log("socks found");
+    } else
+    if(pantsRating != 0){
+        state = 'found';
+        showPants = true;
+        clothesShown++;
+        console.log("pants found");
+    } else
     if(shirtRating != 0){
         state = 'found';
-        console.log("send me funny cat videos");
+        showShirt = true;
+        clothesShown++;
+        console.log("shirt found");
     }
     console.log('hi');
     //text("let me rate your oufit before you put it on!");
@@ -155,53 +176,34 @@ function pieceFound(){
         for (let i = 0; i<predictions.length; i++){
             let object = predictions[i];
 
-            text("lets see the next item!", 10, 15*i+100);
-            /*
-            if(object.label === clothesPiece && showSocks == false){
-                if(object.label === clothesPiece && showPants == false){
-                    if(object.label === clothesPiece && showShirt == false){
+            if(ReviewGiven == true){
+                text("You're going to look as cute as a cat!", 10, 15*i+30);
+                text("I love cats", 10, 15*i+60);
+            } else
+            if(object.label === clothesPiece && showSocks == true){
+                text("Awesome! I think I'm ready to give you a review", 10, 15*i+30);
+                ready = true;
+                
+            }else 
+            if(object.label === clothesPiece && showPants == true){
+                text("Amazing! Let me know when you're ready to continue!", 10, 15*i+30);
+                ready = true;
+                
+            } else 
+            if(object.label === clothesPiece && showShirt == true){
+                text("great! Tell me when you're ready and I'll rate the next item!", 10, 15*i+30);
+                ready = true;
 
-                    }
-                }
             }
-            */
+            
         }
     }
 }
 
-function countDown(){
-    countdown = 3;
-
-    timer = setInterval(interval, 800);
-    //if (countdown == 0) { clearInterval(timer);}
-}
-
-function interval(){
-    countdown--;
-    if (countdown == 0) { clearInterval(timer);}
-}
-
-function drawCountDown(){
-    push();
-    textSize(48);
-    textAlign(CENTER, CENTER);
-    text(countdown, width/2, height/2 );
-    //console.log(countdown);
-    pop();
-}
-
-function highlightObject(object) {
-    // Display a box around it
+function highlightBox(object) {
     push();
     noFill();
-    stroke(255, 255, 0);
+    stroke(255, 255, 255);
     rect(object.x, object.y, object.width, object.height);
     pop();
-    // Display the label and confidence in the center of the box
-    push();
-    textSize(18);
-    fill(255, 255, 0);
-    textAlign(CENTER, CENTER);
-    text(`${object.label}, ${object.confidence.toFixed(2)}`, object.x + object.width / 2, object.y + object.height / 2);
-    pop();
-  }
+}
